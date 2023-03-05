@@ -28,10 +28,10 @@ PubSubClient client(espClient);
 //SocketIoClient webSocket; 
 const char* mqtt_server = "47.104.63.130";
 
-String espID = "";
+String espID = ""; 
 String ID = "";
-const char* Identify = "";
-uint32_t messageTimestamp = 0;
+const char* Identify = "";  
+uint32_t messageTimestamp = 0;  
 int oneMin = 0;
 bool wasAccident = false;
 
@@ -49,11 +49,11 @@ bool temperWorking = false;
 //void messageEventHandler(const char* payload, size_t length);
 //--working commands variable--
  
-const int ResetPin = 22;
+
 //--sensor pin layout--
 const int  SenA = 39;
 const int  SenB = 34;
-const int  SenC = 35;
+const int  SenC = 35;  
 //--wash motor layout--
 const int  wOnOff = 14;
 const int  wDirection = 12; 
@@ -61,13 +61,13 @@ const int  wDirection = 12;
 const int pump1 = 32;
 const int pump2 = 33;
 const int pump3 = 25;
-const int pump4 = 26;
+const int pump4 = 26; 
 const int pump5 = 27; 
 //--solenoid
 const int valve1 = 15; 
 //--others-- 
 const int plug1 = 2;
-const int plug2 = 4;
+const int plug2 = 4; 
 const int plug3 = 5; 
 const int plug4 = 18; 
 const int plug5 = 19;
@@ -81,8 +81,6 @@ bool s_state[14] = {false,false,false,false,false,false,false,false,false,false,
 String temper_current = "0,0,0,0";
 float temperature = 0;
 String c_val = ""; 
-
-int resetVal = 0;
 
 //--- 
 int lastStage = 1;
@@ -106,8 +104,6 @@ float sTemper = 0;
 float tSpeed = 1;
 bool tMode = false;
 bool tPower = false;
-//---clean motor---
-bool cleanMotor = false;
 
 //플러그의 전원유지상태 남은 시간 ...분
 int p1V = 0;
@@ -149,7 +145,6 @@ void pinInit(){
    memset(s_state, false, sizeof(s_state));
 }
 void pinSet(){ 
-   pinMode(ResetPin, INPUT);
    pinMode(SenA, INPUT);
    pinMode(SenB, INPUT);
    pinMode(SenC, INPUT); 
@@ -181,8 +176,7 @@ void setup() {
     Identify = ID.c_str();     
     Serial.begin(115200);   
     Serial2.begin(19200, SERIAL_8N1, RXD2, TXD2);
-    String NM = "FishLove-"+espID;
-    SerialBT.begin(NM);
+    SerialBT.begin("FishLove");
     WiFi.disconnect();
     
     EEPROM.begin(512); 
@@ -247,7 +241,7 @@ void initialData(){
     Serial.println("API data");
     Serial.println(sensorReadings);
     const char* payload = sensorReadings.c_str(); 
-    controlCommand(payload, 0, 0); 
+    controlCommand(payload, 0); 
 }
 
 void callback(char* topic, byte* message, double length) {
@@ -263,7 +257,7 @@ void callback(char* topic, byte* message, double length) {
     Serial.println(); 
     if (String(topic) == sTopic) {
         const char* payload = messageTemp.c_str();  
-        controlCommand(payload, 0, 1);
+        controlCommand(payload, 0);
     }
     
     // 자동모드동작명령  
@@ -655,42 +649,42 @@ void linseWater() {
         int remain = cleanTime % 20;
         if(remain>=1 && remain <=8 && cleanTime <= 60){  
             if(s_state[13] == false){
-              delay(1000);
-              digitalWrite(wDirection, HIGH);
-              delay(1000);
+            delay(1000);
+            digitalWrite(wDirection, HIGH);
+            delay(1000);
             } 
             if(s_state[0] == false){
-              delay(1000);
-              digitalWrite(wOnOff, HIGH);
-              delay(1000);
+            delay(1000);
+            digitalWrite(wOnOff, HIGH);
+            delay(1000);
             }  
             s_state[13] = true;
             s_state[0] = true; 
             Serial.println("+ 회전");
         }else if(remain>=11 && remain<=18 && cleanTime <= 60){
             if(s_state[13] == true){
-              delay(1000);
-              digitalWrite(wDirection, LOW);
-              delay(1000);
+            delay(1000);
+            digitalWrite(wDirection, LOW);
+            delay(1000);
             } 
             if(s_state[0] == false){
-              delay(1000);
-              digitalWrite(wOnOff, HIGH);
-              delay(1000);
+            delay(1000);
+            digitalWrite(wOnOff, HIGH);
+            delay(1000);
             } 
             s_state[13] = false;
             s_state[0] = true; 
             Serial.println("- 회전"); 
         }else{ 
             if(s_state[0] == true){
-              delay(1000);
-              digitalWrite(wOnOff, LOW); 
-              delay(1000);
+            delay(1000);
+            digitalWrite(wOnOff, LOW); 
+            delay(1000);
             } 
             if(s_state[13] == true){
-              delay(1000);
-              digitalWrite(wDirection, LOW);
-              delay(1000);
+            delay(1000);
+            digitalWrite(wDirection, LOW);
+            delay(1000);
             } 
             s_state[0] = false;
             s_state[13] = false;
@@ -701,9 +695,9 @@ void linseWater() {
             cleanStep = 4;
             cleanTime = 0;
             if(s_state[0] == true){
-              delay(1000);
-              digitalWrite(wOnOff, LOW); 
-              delay(1000);
+            delay(1000);
+            digitalWrite(wOnOff, LOW); 
+            delay(1000);
             }  
             delay(2000);
             s_state[0] = false; 
@@ -718,9 +712,9 @@ void linseWater() {
         s_state[2] = true;
         if(s_val[8] == true){
             if(s_state[2] == true){
-              delay(1000);
-              digitalWrite(pump2, LOW);
-              delay(1000);
+            delay(1000);
+            digitalWrite(pump2, LOW);
+            delay(1000);
             }        
             s_state[2] = false;
             cleanStep = 5;
@@ -729,40 +723,40 @@ void linseWater() {
     if(cleanStep == 5){
         if(s_val[7] == true){
             if(s_state[3] == false){
-              delay(1000);
-              digitalWrite(pump3, HIGH);
-              delay(1000);
+            delay(1000);
+            digitalWrite(pump3, HIGH);
+            delay(1000);
             }      
             s_state[3] = true;
             cleanTime = 0;
         }      
         if(s_val[7] == false){          
             if(cleanTime > 90){  // /////// time setting
-              if(s_state[3] == true){
-                  delay(1000);
-                  digitalWrite(pump3, LOW);  
-                  delay(1000);
-              }          
-              s_state[3] = false; 
-              cleanTime = 0;
-              nowWater = false;
-              cleanStep = 1; 
-              String cid = "gLinse-" + String(fCycleMode);  
-              emitData(cid, fCycleMode); 
-              initPump();
-              delay(100);
-              //initialData();
-              if(filterMode == 2 || filterMode == 3){
-                  fCycleMode = 2; 
-              }else{
-                  if(fCycleModeTemp == fCycleMode){
-                  fCycleMode = 1;
-                  }          
-                  fCycleModeTemp = fCycleMode;
-              } 
-              wasAccident = false; 
-              lastStage = 4;
-              msgWarn();
+            if(s_state[3] == true){
+                delay(1000);
+                digitalWrite(pump3, LOW);  
+                delay(1000);
+            }          
+            s_state[3] = false; 
+            cleanTime = 0;
+            nowWater = false;
+            cleanStep = 1; 
+            String cid = "gLinse-" + String(fCycleMode);  
+            emitData(cid, fCycleMode); 
+            initPump();
+            delay(100);
+            //initialData();
+            if(filterMode == 2 || filterMode == 3){
+                fCycleMode = 2; 
+            }else{
+                if(fCycleModeTemp == fCycleMode){
+                fCycleMode = 1;
+                }          
+                fCycleModeTemp = fCycleMode;
+            } 
+            wasAccident = false; 
+            lastStage = 4;
+            msgWarn();
             }
         }
         if(s_val[0] == true){
@@ -808,7 +802,7 @@ void autoCommand(const char* payload, size_t length){
     delete cmd;  
 } 
  
-void controlCommand(const char* payload, size_t length, int m){  
+void controlCommand(const char* payload, size_t length){  
     emitCnt = 0;
     Serial.println("**************************"); 
     String Str = (String)payload;  
@@ -829,7 +823,6 @@ void controlCommand(const char* payload, size_t length, int m){
     bool tmode = settingObj["tm"];
     bool tpower = settingObj["tp"];
     bool spump = settingObj["sp"];
-    bool cleanmotor = settingObj["cm"];
 
     String obj = settingObj["pg"]; 
     String p1 = getValue(obj,',',0);
@@ -870,9 +863,7 @@ void controlCommand(const char* payload, size_t length, int m){
     tSpeed = tspeed;
     tMode = tmode;
     tPower = tpower;
-    sPump = spump;    
-    cleanMotor = cleanmotor;
-     
+    sPump = spump;
     Serial.println("commands......");   
     Serial.println(fCycleMode);
     delete cmd;  
@@ -943,58 +934,6 @@ void controlHeater() {
         Serial.println("heater off:");
     }   
       
-    
-  }else{
-    digitalWrite(plug5, LOW);
-    delay(500);
-    digitalWrite(plug6, LOW); 
-    s_state[11] = false;
-    s_state[12] = false;
-  } 
-}
-
-int rst = 5;
-void controlHeaterStrict() { 
-  if(tPower == true){
-    temperSecond++;
-    
-    if(temperSecond > 60){
-      temperSecond = 0; 
-      temperMinute++;
-    }
-    if(temperMinute > 100){
-      temperMinute = 0; 
-    }
-        
-
-    int onCycle = temperMinute % 10;
-    Serial.println("onCycle value:");
-    Serial.println(onCycle);
-
-    if(onCycle < rst){
-      if(eTemper < temperature){
-        digitalWrite(plug5, LOW);
-        delay(500);
-        digitalWrite(plug6, LOW); 
-        s_state[11] = false;
-        s_state[12] = false;
-        Serial.println("heater off:");
-      }
-      if(sTemper > temperature){ 
-        Serial.println("heater on:");
-        digitalWrite(plug5, HIGH);
-        delay(500);
-        digitalWrite(plug6, HIGH);  
-        s_state[11] = true;
-        s_state[12] = true;
-      } 
-    }else{
-        digitalWrite(plug5, LOW);
-        digitalWrite(plug6, LOW); 
-        s_state[11] = false;
-        s_state[12] = false;
-        Serial.println("heater off:");
-    }         
     
   }else{
     digitalWrite(plug5, LOW);
@@ -1198,71 +1137,6 @@ void initPump(){
    s_state[5] = false;  
 }
 
-bool cleanState = false;
-
-void cleanWork(){   
-  if(cleanState){
-    if(s_val[8] == true){
-      if(s_state[2] == true){
-          delay(1000);
-          digitalWrite(pump2, LOW);
-          delay(1000);
-          s_state[2] = false;
-          Serial.println("2번펌프닫기, clean end");
-      }  
-    }    
-  }else{
-     cleanState = true;
-     digitalWrite(wOnOff, LOW); 
-     delay(500);
-     digitalWrite(wDirection, LOW); 
-     delay(500);
-     digitalWrite(pump1, LOW); 
-     delay(500);
-     digitalWrite(pump2, HIGH); 
-     delay(500);
-     digitalWrite(pump3, LOW);
-     delay(500);
-     digitalWrite(pump4, LOW); 
-     delay(500);
-     digitalWrite(pump5, LOW); 
-     s_state[0] = false;
-     s_state[13] = false;
-     s_state[1] = false;
-     s_state[2] = true;
-     s_state[3] = false;
-     s_state[4] = false;
-     s_state[5] = false;  
-  } 
-}
-
-void cleanWorkAfter(){
-  cleanTime++;
-  if(s_val[7] == true){
-      if(s_state[3] == false){
-        delay(1000);
-        digitalWrite(pump3, HIGH);
-        delay(1000);
-      }      
-      s_state[3] = true;
-      cleanTime = 0;
-  }      
-  if(s_val[7] == false){          
-      if(cleanTime > 90){  // /////// time setting
-        if(s_state[3] == true){
-            delay(1000);
-            digitalWrite(pump3, LOW);  
-            delay(1000);
-        }          
-        s_state[3] = false; 
-        cleanTime = 0; 
-        initPump();
-        delay(100);
-        cleanState = false;        
-      }
-  }
-}
-
 void controlFilter(){
   controlSolenoid();
   supplyWater(); 
@@ -1327,7 +1201,7 @@ void emitData(String cid, int modes){
     String sState = String(s_val[0])+String(s_val[1])+String(s_val[2])+String(s_val[3])+String(s_val[4])+String(s_val[5])+String(s_val[6])+String(s_val[7])+String(s_val[8])+String(s_val[9]);
     String myData = "{'tp':"+String(temperature)+ ",'tw':" + String(temperWorking) + ",'cv':'" + String(temper_current) + "', 'tr':'"+ String(cleanStep) + "', 'cs':"+String(fCycleModeTemp)+ ", 'st':'"+ sState + "', 'pt':'"+ pState + "', 'cr':"+String(wasAccident)+ ", 'tc':"+String(lastStage)+ "}";
     String muxCmd = "{'id':'" + espID +  "','fp':'" + String(fPower) +  "','cid':'" + cid + "','data':"+ myData + ",'ts':'" + timeStamp + "'}" ;
-    sData =  muxCmd ;    
+    sData =  muxCmd ;   
     const char* cstr = sData.c_str(); 
     cmdTemp = muxCmd;
     emitCnt = 0;
@@ -1343,27 +1217,15 @@ void checkAccident(){
     }
 }
 
-void callReset(){
-    for (int i = 0; i < 96; ++i) {
-        EEPROM.write(i, 0);
-    } 
-    EEPROM.commit();
-}
-
 bool stopAll = false;
 int stampCnt = 0;
 int wifiCnt = 0;
 bool workLed = true;
-void loop() {  
-    
+void loop() { 
+    //wm.process();  
     uint32_t now = millis();  
     if(abs(now - messageTimestamp) > 1000){   
-        resetVal = digitalRead(ResetPin); 
-        if(resetVal == LOW){
-          callReset();
-          Serial.println("call in reset... here");    
-          delay(3000);
-        } 
+        Serial.println("call in...");
         if((WiFi.status() == WL_CONNECTED)){
             workLed = !workLed;
             if(workLed){
@@ -1375,8 +1237,7 @@ void loop() {
                 reconnect();
             }
             client.loop();
-            Serial.println("call in... here");    
-               
+            Serial.println("call in... here");       
             ///----check the serial port----
             bool cmdFlag = false;
             String cmdTemp = ""; 
@@ -1390,33 +1251,20 @@ void loop() {
                 cmdFlag = false; 
                 cmdAnalysis(cmdTemp);           
             } 
-
-            
             
             stampCnt++;  
             wifiCnt = 0;
             Serial.println("working..."); 
-            messageTimestamp = now;                
-            muxSnData();  
+            messageTimestamp = now;   
+            muxSnData(); 
+            controlHeater(); 
+            
             if(emitCnt > 5){ 
                 Serial.println("재기동....");
                 Serial.println(emitCnt);
                 Serial.println("************");
                 ESP.restart(); 
             } 
-
-            if(cleanMotor){
-              cleanWork();
-              emitData("gGen", fCycleMode);  
-              return; 
-            }else{
-              if(cleanState){
-                cleanWorkAfter();
-                return;
-              } 
-              // cleanState = false;  
-            }            
-            controlHeaterStrict();
 
             if(s_val[2] == false){ 
                 if((fCycleMode !=3 || fCycleMode !=4) && (filterMode == 2 || filterMode == 3)){
@@ -1440,23 +1288,23 @@ void loop() {
             controlPlug(); 
             if(stopAll == false){
                 if(fPower == true){
-                  controlFilter(); 
+                controlFilter(); 
                 }else{
-                  initPump();
-                  fCycleModeTemp = 1;
+                initPump();
+                fCycleModeTemp = 1;
                 }            
             }  
             emitData("gGen", fCycleMode);  
             
             temperCnt++;
             if(temperCnt>4){
-              temperCnt = 0;
-              if(temperStamp == temperStampTemp){
-                  temperWorking = false;
-              }else{
-                  temperStampTemp = temperStamp;  
-                  temperWorking = true;
-              }
+            temperCnt = 0;
+            if(temperStamp == temperStampTemp){
+                temperWorking = false;
+            }else{
+                temperStampTemp = temperStamp;  
+                temperWorking = true;
+            }
             }  
 
             if(stampCnt > 30){
@@ -1486,37 +1334,34 @@ void loop() {
             String key = inData.substring(mpIndex+1, lpIndex).substring(0,3);
             
             
-                if(key == "set"){ 
-                    for (int i = 0; i < 96; ++i) {
-                        EEPROM.write(i, 0);
-                    }
-                    for (int i = 0; i < wifi_name.length(); ++i)
-                    {
-                        EEPROM.write(i, wifi_name[i]); 
-                        Serial.println(wifi_name[i]);
-                    } 
-                    for (int i = 0; i < wifi_pass.length(); ++i)
-                    {
-                        EEPROM.write(32 + i, wifi_pass[i]); 
-                    }
-                    EEPROM.commit(); 
-                    String r = "OK";
-                    String sdata = r.c_str();
-                    for(int i = 0 ; i < sdata.length(); i++ ){
-                        SerialBT.write(sdata[i]);
-                    } 
-                     Serial.println("재기동...."); 
-                     Serial.println("************");
-                     ESP.restart(); 
+            if(key == "set"){ 
+                for (int i = 0; i < 96; ++i) {
+                    EEPROM.write(i, 0);
                 }
-                if(key == "mac"){
-                    Serial.println("here 2");
-                    Serial.println(myWifi);
-                    String sdata = myWifi.c_str();  
-                    for(int i = 0 ; i < sdata.length(); i++ ){
-                        SerialBT.write(sdata[i]);
-                    } 
+                for (int i = 0; i < wifi_name.length(); ++i)
+                {
+                    EEPROM.write(i, wifi_name[i]); 
+                    Serial.println(wifi_name[i]);
+                } 
+                for (int i = 0; i < wifi_pass.length(); ++i)
+                {
+                    EEPROM.write(32 + i, wifi_pass[i]); 
                 }
+                EEPROM.commit(); 
+                String r = "OK";
+                String sdata = r.c_str();
+                for(int i = 0 ; i < sdata.length(); i++ ){
+                    SerialBT.write(sdata[i]);
+                } 
+            }
+            if(key == "mac"){
+                Serial.println("here 2");
+                Serial.println(myWifi);
+                String sdata = myWifi.c_str();  
+                for(int i = 0 ; i < sdata.length(); i++ ){
+                    SerialBT.write(sdata[i]);
+                } 
+            }
                 
             } 
             
